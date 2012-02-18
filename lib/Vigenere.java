@@ -9,38 +9,54 @@ public class Vigenere implements Cipher {
 	
 	// Attributes
 	
-	private char[] key;
+	private Key key;	// Key stored as a Key object.
 	
 	// Constructor
 	
 	public Vigenere() {
-		
+		// If no key specified,
+		// generates a random key and
+		// uses it.
+		key = new Key();
+		key.generate(1);
 	}
 	
 	public Vigenere(String k) {
-		
-		key = k.toCharArray();
+		key = new Key(k);
 	}
 	
 	public Vigenere(char[] k) {
-		
+		key = new Key(new String(k));
+	}
+	
+	public Vigenere(String[] k) {
+		key = new Key(k);
+	}
+	
+	public Vigenere(Key k) {
 		key = k;
-		
 	}
 	
 	// Get, set methods.
 	
-	
-	public void setKey(String k) {
-		key = k.toCharArray();
-	}
-	
-	public void setKey(char[] k) {
+	public void setKey(Key k) {
 		key = k;
 	}
 	
+	public void setKey(String[] k) {
+		key.setKeyset(k);
+	}
+	
+	public void setKey(String k) {
+		key.setKey(k);
+	}
+	
+	public void setKey(char[] k) {
+		key.setKey(new String(k));
+	}
+	
 	public String getKey() {
-		return new String(key);
+		return key.toString();
 	}
 	
 	// Encoding methods.
@@ -68,10 +84,11 @@ public class Vigenere implements Cipher {
 		// the addition of two characters takes us out of those
 		// bounds.
 
+		char[] k = key.getKey().toCharArray();
 		char[] ciphertext = new char[plaintext.length];
 		
 		for (int i = 0; i < plaintext.length; i++)
-			ciphertext[i] = (char)((plaintext[i] + key[i%key.length])%UNICODE);
+			ciphertext[i] = (char)((plaintext[i] + k[i%k.length])%UNICODE);
 		
 		return ciphertext;
 		
@@ -83,12 +100,13 @@ public class Vigenere implements Cipher {
 		// all alphabet characters modulo 26 (i.e. wraps them around
 		// the alphabet); this is the conventional Vigenere cipher.
 		
+		char[] k = key.getKey().toCharArray();
 		char[] ciphertext = new char[plaintext.length];
 		
 		for (int i = 0; i < plaintext.length; i++) {
 			if (Character.isLetter(plaintext[i])) {
 				int result = (Character.getNumericValue(plaintext[i])
-						+ Character.getNumericValue(key[i%key.length]) - 20)%26;
+						+ Character.getNumericValue(k[i%k.length]) - 20)%26;
 				result += (Character.isUpperCase(plaintext[i])) ? UPPERCASE : LOWERCASE;
 				ciphertext[i] = (char)(result);
 			}
@@ -123,10 +141,11 @@ public class Vigenere implements Cipher {
 		// Therefore, checks are done to ensure a wrapping around
 		// when subtracting.
 
+		char[] k = key.getKey().toCharArray();
 		char[] plaintext = new char[ciphertext.length];
 		
 		for (int i = 0; i < ciphertext.length; i++) {
-			int result = (ciphertext[i] - key[i%key.length]);
+			int result = (ciphertext[i] - k[i%k.length]);
 			result = (result < 0) ? UNICODE+result : result;
 			plaintext[i] = (char)(result);
 
@@ -142,12 +161,13 @@ public class Vigenere implements Cipher {
 		// all alphabet characters modulo 26 (i.e. wraps them around
 		// the alphabet); this is the conventional Vigenere cipher.
 		
+		char[] k = key.getKey().toCharArray();
 		char[] plaintext = new char[ciphertext.length];
 		
 		for (int i = 0; i < ciphertext.length; i++) {
 			if (Character.isLetter(ciphertext[i])) {
 				int result = ((Character.getNumericValue(ciphertext[i])-10)
-						- (Character.getNumericValue(key[i%key.length])-10))%26;
+						- (Character.getNumericValue(k[i%k.length])-10))%26;
 				result = (result<0) ? 26+result : result;
 				result += (Character.isUpperCase(ciphertext[i])) ? UPPERCASE : LOWERCASE;
 				plaintext[i] = (char)(result);
