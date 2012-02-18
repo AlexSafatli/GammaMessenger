@@ -128,9 +128,10 @@ public class Key {
 		File file = new File(path);
 		
 		try {
+			file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
 		
-			for (int i = 0; i < keyset.length; i++) output.write(keyset[i]);
+			for (int i = 0; i < keyset.length; i++) output.write(keyset[i] + "\n");
 			
 			output.close();
 		}
