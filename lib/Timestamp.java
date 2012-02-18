@@ -12,7 +12,7 @@ public class Timestamp {
 	
 	// Attributes
 	
-	private final Calendar calendar = Calendar.getInstance();
+	private final Calendar CALENDAR = Calendar.getInstance();
 	private int year;
 	private int month;
 	private int day;
@@ -24,12 +24,12 @@ public class Timestamp {
 	
 	public Timestamp() {
 		// Set all date variables.
-		year = calendar.get(Calendar.YEAR);
-		month = calendar.get(Calendar.MONTH);
-		day = calendar.get(Calendar.DATE);
-		hour = calendar.get(Calendar.HOUR);
-		minute = calendar.get(Calendar.MINUTE);
-		second = calendar.get(Calendar.SECOND);
+		year = CALENDAR.get(Calendar.YEAR);
+		month = CALENDAR.get(Calendar.MONTH);
+		day = CALENDAR.get(Calendar.DATE);
+		hour = CALENDAR.get(Calendar.HOUR_OF_DAY); // 24-hour format.
+		minute = CALENDAR.get(Calendar.MINUTE);
+		second = CALENDAR.get(Calendar.SECOND);
 	}
 	
 	// Get methods.
@@ -59,14 +59,14 @@ public class Timestamp {
 	}
 	
 	public Calendar getCalendarInstance() {
-		return calendar;
+		return CALENDAR;
 	}
 	
 	// Returns the string.
 
 	public String toString() {
 		SimpleDateFormat date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		return date.format(calendar.getTime());
+		return date.format(CALENDAR.getTime());
 	}
 	
 }

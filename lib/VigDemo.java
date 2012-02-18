@@ -24,13 +24,15 @@ public class VigDemo {
 		CodedMessage s = v.encode(msg);
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
+		System.out.println("This message was encoded at " + s.getTime().getHour()
+				+ ":" + s.getTime().getMinute() + " 'o clock.");
 		System.out.println("Decoded Message: " + v.decode(s));
 		
 		System.out.println("\n[CAESAR] Shift = " + shift + "\n");
 		
-		s = c.encodeAlpha(msg);
+		s = c.encode(msg);
 		System.out.println("Encoded Message: " + s);
-		System.out.println("Decoded Message: " + c.decodeAlpha(s));
+		System.out.println("Decoded Message: " + c.decode(s));
 		
 	}
 	

@@ -44,7 +44,14 @@ public class Message {
 	}
 	
 	public String getMessage() {
+		// Returns a String.
 		return new String(text);
+	}
+	
+	public char[] getCharArray() {
+		// Get the character array rather than
+		// the String representation of the message.
+		return text;
 	}
 	
 	public void setMessage(String m) {

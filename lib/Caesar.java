@@ -43,7 +43,7 @@ public class Caesar implements Cipher {
 	}
 	
 	public CodedMessage encode(Message plaintext) {
-		return new CodedMessage(cipher(plaintext.getMessage().toCharArray()));
+		return new CodedMessage(cipher(plaintext.getCharArray()));
 	}
 	
 	public CodedMessage encodeAlpha(String plaintext) {
@@ -51,7 +51,7 @@ public class Caesar implements Cipher {
 	}
 	
 	public CodedMessage encodeAlpha(Message plaintext) {
-		return new CodedMessage(cipherAlpha(plaintext.getMessage().toCharArray()));
+		return new CodedMessage(cipherAlpha(plaintext.getCharArray()));
 	}
 	
 	private char[] cipher(char[] plaintext) {
@@ -64,7 +64,7 @@ public class Caesar implements Cipher {
 		char[] ciphertext = new char[plaintext.length];
 		
 		for (int i = 0; i < plaintext.length; i++)
-			ciphertext[i] = (char)((plaintext[i] + shift)%65535);
+			ciphertext[i] = (char)((plaintext[i] + shift)%UNICODE);
 		
 		return ciphertext;
 		
@@ -82,7 +82,7 @@ public class Caesar implements Cipher {
 			if (Character.isLetter(plaintext[i])) {
 				int result = ((Character.getNumericValue(plaintext[i])-10)
 						+ shift)%26;
-				result += (Character.isUpperCase(plaintext[i])) ? 65 : 97;
+				result += (Character.isUpperCase(plaintext[i])) ? UPPERCASE : LOWERCASE;
 				ciphertext[i] = (char)(result);
 			}
 			else ciphertext[i] = plaintext[i];
@@ -120,7 +120,7 @@ public class Caesar implements Cipher {
 		
 		for (int i = 0; i < ciphertext.length; i++) {
 			int result = (ciphertext[i] - shift);
-			result = (result < 0) ? 65535+result : result;
+			result = (result < 0) ? UNICODE+result : result;
 			plaintext[i] = (char)(result);
 		}
 		
@@ -141,7 +141,7 @@ public class Caesar implements Cipher {
 				int result = ((Character.getNumericValue(ciphertext[i])-10)
 						- shift)%26;
 				result = (result<0) ? 26+result : result;
-				result += (Character.isUpperCase(ciphertext[i])) ? 65 : 97;
+				result += (Character.isUpperCase(ciphertext[i])) ? UPPERCASE : LOWERCASE;
 				plaintext[i] = (char)(result);
 			}
 			else plaintext[i] = ciphertext[i];
