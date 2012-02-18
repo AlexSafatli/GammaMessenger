@@ -5,6 +5,8 @@
 // object is constructed, the time which it was
 // constructed will be embedded into the object.
 
+package lib;
+
 public class Message {
 	
 	// Attributes

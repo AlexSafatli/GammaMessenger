@@ -3,6 +3,8 @@
 // When an object is constructed, all relevant values for
 // the time when it was constructed are stored as integers.
 
+package lib;
+
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 

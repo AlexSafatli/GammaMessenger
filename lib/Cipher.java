@@ -2,6 +2,8 @@
 // Cipher-related object, such as the Vigenere
 // or Ceasar cipher objects.
 
+package lib;
+
 public interface Cipher {
 	
 	// Encoding methods.

@@ -3,6 +3,8 @@
 // respectively using both a classical and 
 // modern implementation of the Vigenere Cipher.
 
+package lib;
+
 public class Vigenere implements Cipher {
 	
 	// Attributes

@@ -9,6 +9,8 @@
 // carried along with the object and used in some
 // manner by the message's recipient.
 
+package lib;
+
 public class CodedMessage extends Message {
 	
 	// Attributes

@@ -3,6 +3,8 @@
 // respectively using both a classical and 
 // modern implementation of the Caesar Cipher.
 
+package lib;
+
 public class Caesar implements Cipher {
 	
 	// Attributes
