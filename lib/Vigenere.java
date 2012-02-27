@@ -16,7 +16,7 @@ public class Vigenere implements Cipher {
 	public Vigenere() {
 		// If no key specified,
 		// generates a random key and
-		// uses it.
+		// uses it internally.
 		key = new Key();
 		key.generate(1);
 	}
@@ -39,7 +39,14 @@ public class Vigenere implements Cipher {
 	
 	// Get, set methods.
 	
+	public String getKey() {
+		return key.toString();
+	}
+	
 	public void setKey(Key k) {
+		// If Key object given,
+		// set it directly.
+		
 		key = k;
 	}
 	
@@ -53,10 +60,6 @@ public class Vigenere implements Cipher {
 	
 	public void setKey(char[] k) {
 		key.setKey(new String(k));
-	}
-	
-	public String getKey() {
-		return key.toString();
 	}
 	
 	// Encoding methods.
@@ -107,7 +110,8 @@ public class Vigenere implements Cipher {
 			if (Character.isLetter(plaintext[i])) {
 				int result = (Character.getNumericValue(plaintext[i])
 						+ Character.getNumericValue(k[i%k.length]) - 20)%26;
-				result += (Character.isUpperCase(plaintext[i])) ? UPPERCASE : LOWERCASE;
+				result += (Character.isUpperCase(plaintext[i])) 
+						? UPPERCASE : LOWERCASE; // Correct case.
 				ciphertext[i] = (char)(result);
 			}
 			else ciphertext[i] = plaintext[i];
@@ -169,7 +173,8 @@ public class Vigenere implements Cipher {
 				int result = ((Character.getNumericValue(ciphertext[i])-10)
 						- (Character.getNumericValue(k[i%k.length])-10))%26;
 				result = (result<0) ? 26+result : result;
-				result += (Character.isUpperCase(ciphertext[i])) ? UPPERCASE : LOWERCASE;
+				result += (Character.isUpperCase(ciphertext[i])) 
+						? UPPERCASE : LOWERCASE; // Correct case.
 				plaintext[i] = (char)(result);
 			}
 			else plaintext[i] = ciphertext[i];

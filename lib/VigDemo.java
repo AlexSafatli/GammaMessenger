@@ -7,21 +7,31 @@ public class VigDemo {
 		
 		Scanner k = new Scanner(System.in);
 		
+		// Get input.
+		
 		System.out.print("Enter a string: ");
 		String msg = k.nextLine();
 		
-		System.out.print("[CAESAR] Enter a shift amount: ");
+		System.out.print("Enter a shift amount (for the Caesar cipher): ");
 		int shift = k.nextInt();
+		
+		// Generate key.
 		
 		Key key = new Key();
 		key.generate(2);
+		
+		// Make cipher objects.
+		
 		Vigenere v = new Vigenere(key);
 		Caesar c = new Caesar(shift);
 		
-		System.out.println("\n[VIGENERE]\n");
+		// Output.
 		
+		System.out.println("\n[VIGENERE]\n");
 		System.out.println("--- Encoding 1 ---\n");
-		CodedMessage s = v.encode(msg);
+		
+		CodedMessage s = v.encode(msg); // Encode message (Vigenere).
+		
 		System.out.println("Key: " + key);
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
@@ -30,8 +40,10 @@ public class VigDemo {
 		System.out.println("Decoded Message: " + v.decode(s));
 		
 		System.out.println("\n--- Encoding 2 ---\n");
-		key.incrementIndex();
-		s = v.encode(msg);
+		
+		key.incrementIndex(); // Increment the key index.
+		s = v.encode(msg); // Encode message again (Vigenere).
+		
 		System.out.println("Key: " + key);
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
@@ -41,7 +53,8 @@ public class VigDemo {
 		
 		System.out.println("\n[CAESAR] Shift = " + shift + "\n");
 		
-		s = c.encode(msg);
+		s = c.encode(msg); // Encode message (Caesar).
+		
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Decoded Message: " + c.decode(s));
 		

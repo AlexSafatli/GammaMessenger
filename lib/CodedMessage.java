@@ -23,7 +23,6 @@ public class CodedMessage extends Message {
 	// Constructor
 	
 	public CodedMessage() {
-		
 	}
 	
 	public CodedMessage(String c) {
@@ -35,17 +34,13 @@ public class CodedMessage extends Message {
 	}
 	
 	public CodedMessage(String c, int k) {
-		
 		super(c);
 		keyId = k;
-		
 	}
 	
 	public CodedMessage(char[] c, int k) {
-		
 		super(c);
 		keyId = k;
-		
 	}
 	
 	// Get method. Set method.

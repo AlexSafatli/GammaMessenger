@@ -1,9 +1,11 @@
 // An encapsulation of a String or array
 // of characters that is intended to be sent
 // to another person, i.e. through an instant
-// messaging protocol. When an instance of this
-// object is constructed, the time which it was
-// constructed will be embedded into the object.
+// messaging protocol. 
+
+// When an instance of this object is constructed, 
+// the time which it was constructed will be embedded 
+// into the object.
 
 package lib;
 
@@ -19,22 +21,17 @@ public class Message {
 	// Constructor
 	
 	public Message() {
-		
 		time = new Timestamp();
-		
 	}
 	
 	public Message(String te) {
-		
 		text = te.toCharArray();
 		time = new Timestamp();
 	}
 	
 	public Message(char[] te) {
-		
 		text = te;
 		time = new Timestamp();
-		
 	}
 	
 	// Get methods. Set methods for message.

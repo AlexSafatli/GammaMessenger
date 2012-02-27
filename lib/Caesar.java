@@ -12,28 +12,25 @@ public class Caesar implements Cipher {
 	private int shift=3;	// While the conventional Caesar cipher
 							// employs a shift of 3, this class allows
 							// for a Shift Cipher of any variant shift
-							// amount, if specified.
+							// amount, if specified as such.
 	
 	// Constructor
 	
 	public Caesar() {
-		
 	}
 	
 	public Caesar(int s) {
-		
 		shift = s;
 	}
 	
 	// Get, set methods.
 	
+	public int getShift() {
+		return shift;
+	}
 	
 	public void setShift(int s) {
 		shift = s;
-	}
-	
-	public int getShift() {
-		return shift;
 	}
 	
 	// Encoding methods.
@@ -82,7 +79,8 @@ public class Caesar implements Cipher {
 			if (Character.isLetter(plaintext[i])) {
 				int result = ((Character.getNumericValue(plaintext[i])-10)
 						+ shift)%26;
-				result += (Character.isUpperCase(plaintext[i])) ? UPPERCASE : LOWERCASE;
+				result += (Character.isUpperCase(plaintext[i])) 
+						? UPPERCASE : LOWERCASE; // Correct case.
 				ciphertext[i] = (char)(result);
 			}
 			else ciphertext[i] = plaintext[i];
@@ -132,7 +130,7 @@ public class Caesar implements Cipher {
 		// Performs the decoding by ignoring all non-alphabet
 		// characters and leaving them as they are, and then decoding
 		// all alphabet characters modulo 26 (i.e. wraps them around
-		// the alphabet); this is the conventional Vigenere cipher.
+		// the alphabet); this is the conventional Caesar cipher.
 		
 		char[] plaintext = new char[ciphertext.length];
 		
@@ -141,7 +139,8 @@ public class Caesar implements Cipher {
 				int result = ((Character.getNumericValue(ciphertext[i])-10)
 						- shift)%26;
 				result = (result<0) ? 26+result : result;
-				result += (Character.isUpperCase(ciphertext[i])) ? UPPERCASE : LOWERCASE;
+				result += (Character.isUpperCase(ciphertext[i])) 
+						? UPPERCASE : LOWERCASE; // Correct case.
 				plaintext[i] = (char)(result);
 			}
 			else plaintext[i] = ciphertext[i];
