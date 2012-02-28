@@ -185,6 +185,8 @@ public class Key {
 		
 		try {
 			
+			// Will overwrite the file if already present.
+			
 			file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
 		
