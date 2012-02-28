@@ -1,3 +1,6 @@
+// Shows how to use the relevant
+// Cipher objects.
+
 package lib;
 import java.util.Scanner;
 
@@ -31,24 +34,26 @@ public class VigDemo {
 		System.out.println("--- Encoding 1 ---\n");
 		
 		CodedMessage s = v.encode(msg); // Encode message (Vigenere).
+		String keyShow = key.toString().substring(0,25); // Only show part of key.
 		
-		System.out.println("Key: " + key);
+		System.out.println("Key: " + keyShow + "...\n");
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
 		System.out.println("This message was encoded at " + s.getTime().getHour()
-				+ ":" + s.getTime().getMinute() + " 'o clock.");
+				+ " 'o clock.\n");
 		System.out.println("Decoded Message: " + v.decode(s));
 		
 		System.out.println("\n--- Encoding 2 ---\n");
 		
 		key.incrementIndex(); // Increment the key index.
 		s = v.encode(msg); // Encode message again (Vigenere).
+		keyShow = key.toString().substring(0,25); // Only show part of (new) key.
 		
-		System.out.println("Key: " + key);
+		System.out.println("Key: " + keyShow + "...\n");
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
 		System.out.println("This message was encoded at " + s.getTime().getHour()
-				+ ":" + s.getTime().getMinute() + " 'o clock.");
+				+ " 'o clock.\n");
 		System.out.println("Decoded Message: " + v.decode(s));
 		
 		System.out.println("\n[CAESAR] Shift = " + shift + "\n");

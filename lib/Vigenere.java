@@ -111,7 +111,7 @@ public class Vigenere implements Cipher {
 				int result = (Character.getNumericValue(plaintext[i])
 						+ Character.getNumericValue(k[i%k.length]) - 20)%26;
 				result += (Character.isUpperCase(plaintext[i])) 
-						? UPPERCASE : LOWERCASE; // Correct case.
+						? UPPERCASE : LOWERCASE; // Correct case. Above strips case.
 				ciphertext[i] = (char)(result);
 			}
 			else ciphertext[i] = plaintext[i];

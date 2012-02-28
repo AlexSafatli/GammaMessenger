@@ -1,3 +1,6 @@
+// Explore the file I/O operation(s)
+// of the Key object.
+
 package lib;
 import java.util.Scanner;
 
