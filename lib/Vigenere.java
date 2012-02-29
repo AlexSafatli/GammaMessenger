@@ -18,7 +18,7 @@ public class Vigenere implements Cipher {
 		// generates a random key and
 		// uses it internally.
 		key = new Key();
-		key.generate(1);
+		key.generate(1); // 1*1024-size String.
 	}
 	
 	public Vigenere(String k) {
@@ -65,19 +65,22 @@ public class Vigenere implements Cipher {
 	// Encoding methods.
 	
 	public CodedMessage encode(String plaintext) {
-		return new CodedMessage(cipher(plaintext.toCharArray()));
+		// Creates a CodedMessage object and passes it the ciphertext as well
+		// as the key index used (the integer representing the offset/index for
+		// the key array found in the Key object).
+		return new CodedMessage(cipher(plaintext.toCharArray()),key.getIndex());
 	}
 	
 	public CodedMessage encode(Message plaintext) {
-		return new CodedMessage(cipher(plaintext.getCharArray()));
+		return new CodedMessage(cipher(plaintext.getCharArray()),key.getIndex());
 	}
 	
 	public CodedMessage encodeAlpha(String plaintext) {
-		return new CodedMessage(cipherAlpha(plaintext.toCharArray()));
+		return new CodedMessage(cipherAlpha(plaintext.toCharArray()),key.getIndex());
 	}
 	
 	public CodedMessage encodeAlpha(Message plaintext) {
-		return new CodedMessage(cipherAlpha(plaintext.getCharArray()));
+		return new CodedMessage(cipherAlpha(plaintext.getCharArray()),key.getIndex());
 	}
 	
 	private char[] cipher(char[] plaintext) {
@@ -87,8 +90,8 @@ public class Vigenere implements Cipher {
 		// the addition of two characters takes us out of those
 		// bounds.
 
-		char[] k = key.getKey().toCharArray();
-		char[] ciphertext = new char[plaintext.length];
+		char[] k = key.getKey().toCharArray(); // Key.
+		char[] ciphertext = new char[plaintext.length]; // Ciphertext.
 		
 		for (int i = 0; i < plaintext.length; i++)
 			ciphertext[i] = (char)((plaintext[i] + k[i%k.length])%UNICODE);

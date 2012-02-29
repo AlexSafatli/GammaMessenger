@@ -15,9 +15,6 @@ public class VigDemo {
 		System.out.print("Enter a string: ");
 		String msg = k.nextLine();
 		
-		System.out.print("Enter a shift amount (for the Caesar cipher): ");
-		int shift = k.nextInt();
-		
 		// Generate key.
 		
 		Key key = new Key();
@@ -26,7 +23,7 @@ public class VigDemo {
 		// Make cipher objects.
 		
 		Vigenere v = new Vigenere(key);
-		Caesar c = new Caesar(shift);
+		Caesar c = new Caesar();
 		
 		// Output.
 		
@@ -56,7 +53,7 @@ public class VigDemo {
 				+ " 'o clock.\n");
 		System.out.println("Decoded Message: " + v.decode(s));
 		
-		System.out.println("\n[CAESAR] Shift = " + shift + "\n");
+		System.out.println("\n[CAESAR] Shift = " + c.getShift() + "\n");
 		
 		s = c.encode(msg); // Encode message (Caesar).
 		

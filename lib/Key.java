@@ -9,20 +9,29 @@
 // without affecting the cipher so the next encoding
 // uses a new key.
 
+// Keys are stored in an ArrayList and is done so
+// in a way to hide the complexity -- even when
+// values are grabbed they are grabbed as either a
+// String array or a single String. This
+// method of implementation allows for keys to be
+// added or removed with ease.
+
 // See the KeyDemo.java source for an example of
 // implementation.
 
 package lib;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Key {
 	
 	// Attributes
 	
-	private String[] keyset;			// The set of all strings representing keys.
+	private ArrayList<String> keyset;	// The set of all strings representing keys.
 	private int keyindex;				// Specifies which key string is being used.
-	private final int SIZE = 1024;		// Specifies length of each key in the String[].
+	private final int SIZE = 1024;		// Specifies length of each key in the keyset.
 	
 	// Constructor
 	
@@ -30,15 +39,25 @@ public class Key {
 	}
 	
 	public Key(String key) {
-		keyset = new String[1];
-		keyset[0] = key;
+		// If a single key is passed in.
+		keyset = new ArrayList<String>();
+		keyset.add(key);
 	}
 	
 	public Key(String[] keys) {
-		keyset = keys;
+		keyset = new ArrayList<String>(Arrays.asList(keys));
 	}
 	
 	public Key(String[] keys, int k) {
+		keyset = new ArrayList<String>(Arrays.asList(keys));
+		keyindex = k;
+	}
+	
+	public Key(ArrayList<String> keys) {
+		keyset = keys;
+	}
+	
+	public Key(ArrayList<String> keys, int k) {
 		keyset = keys;
 		keyindex = k;
 	}
@@ -47,9 +66,9 @@ public class Key {
 	
 	public String[] getKeyset() {
 		// Returns the full array of
-		// keys.
-		
-		return keyset;
+		// keys as a String array.
+
+		return (String[])keyset.toArray();
 	}
 	
 	public String getKey() {
@@ -57,7 +76,7 @@ public class Key {
 		// associated to the set index of
 		// the key array.
 		
-		return keyset[keyindex];
+		return keyset.get(keyindex);
 	}
 	
 	public int getIndex() {
@@ -66,17 +85,36 @@ public class Key {
 		return keyindex;
 	}
 	
+	public int getLength() {
+		// Gets length of the keyset
+		// (i.e. how many keys are stored).
+		
+		return keyset.size();
+	}
+	
+	public void setKeyset(ArrayList<String> k) {
+		keyset = k;
+	}
+	
 	public void setKeyset(String[] k) {
 		// Sets the key array.
 		
-		keyset = k;
+		keyset = new ArrayList<String>(Arrays.asList(k));
 	}
 	
 	public void setKey(String k) {
 		// Sets the key at the current
 		// index.
 		
-		keyset[keyindex] = k;
+		keyset.set(keyindex, k);
+	}
+	
+	public boolean setKey(String k, int i) {
+		// Sets the key at a given index.
+		
+		if (i < getLength()) keyset.set(i,k);
+		else return false;
+		return true;
 	}
 	
 	public boolean setIndex(int i) {
@@ -84,19 +122,58 @@ public class Key {
 		// ensure index set is possible
 		// (within bounds of array).
 		
-		if (i < keyset.length) keyindex = i;
+		if (i < getLength()) keyindex = i;
 		else return false;
 		return true;
+	}
+	
+	// Add/Remove methods.
+	
+	public boolean removeKey(int i) {
+		// Removes a key at an index
+		// if possible.
 		
+		if (i < getLength()) {
+			keyset.remove(i);
+			if (keyindex == i) keyindex--;
+			if (keyindex < 0) keyindex = 0;
+			return true;
+		}
+		else return false;
+	}
+	
+	public int addKey(String s) {
+		// Adds a key and returns
+		// the index of this new
+		// element.
+		
+		keyset.add(s);
+		return getLength()-1;
+	}
+	
+	// Other methods.
+	
+	public boolean hasKey(String k) {
+		// Returns true if the given key
+		// is contained in the keyset.
+		
+		return keyset.contains(k);
 	}
 	
 	public boolean incrementIndex() {
 		// Increments index by 1 if possible.
 		
-		if (keyindex + 1 < keyset.length) keyindex++;
+		if (keyindex + 1 < getLength()) keyindex++;
 		else return false;
 		return true;
-			
+	}
+	
+	public boolean decrementIndex() {
+		// Decreases index by 1 if possible.
+		
+		if (keyindex - 1 > 0) keyindex--;
+		else return false;
+		return true;
 	}
 	
 	public int randomIndex() {
@@ -109,10 +186,9 @@ public class Key {
 		// Index is returned.
 		
 		Random rng = new Random();
-		int i = rng.nextInt(keyset.length);
+		int i = rng.nextInt(getLength());
 		setIndex(i);
 		return i;
-		
 	}
 	
 	// String processing, file I/O.
@@ -124,9 +200,9 @@ public class Key {
 		// the keyset attribute (key array).
 		
 		int len = str.length()/SIZE;
-		String[] set = new String[len];
+		ArrayList<String> set = new ArrayList<String>();
 		for (int i = 0; i < len; i++)
-			set[i] = str.substring(i*SIZE,(i*SIZE)+SIZE);
+			set.add(str.substring(i*SIZE,(i*SIZE)+SIZE));
 		keyset = set;
 		
 	}
@@ -190,7 +266,7 @@ public class Key {
 			file.createNewFile();
 			output = new BufferedWriter(new FileWriter(file));
 		
-			for (int i = 0; i < keyset.length; i++) output.write(keyset[i] + "\n");
+			for (int i = 0; i < getLength(); i++) output.write(keyset.get(i) + "\n");
 			
 			output.close();
 			
