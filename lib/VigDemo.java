@@ -45,12 +45,12 @@ public class VigDemo {
 		key.incrementIndex(); // Increment the key index.
 		s = v.encode(msg); // Encode message again (Vigenere).
 		keyShow = key.toString().substring(0,25); // Only show part of (new) key.
+		s.fromTransmitString(s.toTransmitString());
 		
 		System.out.println("Key: " + keyShow + "...\n");
 		System.out.println("Encoded Message: " + s);
 		System.out.println("Associated Timestamp: " + s.getTime());
-		System.out.println("This message was encoded at " + s.getTime().getHour()
-				+ " 'o clock.\n");
+		System.out.println("Transmission String: " + s.toTransmitString() + "\n");
 		System.out.println("Decoded Message: " + v.decode(s));
 		
 		System.out.println("\n[CAESAR] Shift = " + c.getShift() + "\n");

@@ -53,4 +53,19 @@ public class CodedMessage extends Message {
 		keyId = k;
 	}
 	
+	// Overwritten methods for
+	// handling transmission strings.
+	// Adding in of keyId to header.
+	
+	public String toTransmitString() {
+		return "[" + keyId + "]" + 
+				getTime().toUnformatted() + getMessage();
+	}
+	
+	public void fromTransmitString(String t) {
+		keyId = Integer.parseInt(t.substring(t.indexOf("[")+1,t.indexOf("]")));
+		setTime(new Timestamp(t.substring(t.indexOf("]")+1,t.indexOf("]")+15)));
+		setMessage(t.substring(t.indexOf("]")+15,t.length()).toCharArray());
+	}
+	
 }

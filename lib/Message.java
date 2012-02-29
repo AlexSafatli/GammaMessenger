@@ -34,10 +34,14 @@ public class Message {
 		time = new Timestamp();
 	}
 	
-	// Get methods. Set methods for message.
+	// Get, set methods.
 	
 	public Timestamp getTime() {
 		return time;
+	}
+	
+	public void setTime(Timestamp t) {
+		time = t;
 	}
 	
 	public String getMessage() {
@@ -58,6 +62,22 @@ public class Message {
 	public void setMessage(char[] m) {
 		text = m;
 	}
+	
+	// Handles conversion of a Message object
+	// into a raw String in order to be sent
+	// across a network. Will include header
+	// information, etc. that can be able to
+	// be used in order to reconstruct the object.
+	
+	public String toTransmitString() {
+		return time.toUnformatted() + getMessage();
+	}
+	
+	public void fromTransmitString(String t) {
+		time = new Timestamp(t.substring(0,14));
+		text = t.substring(14,t.length()).toCharArray();
+	}
+	
 	
 	// Returns the string.
 	
