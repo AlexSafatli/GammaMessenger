@@ -68,7 +68,7 @@ public class Key {
 		// Returns the full array of
 		// keys as a String array.
 
-		return (String[])keyset.toArray();
+		return keyset.toArray(new String[keyset.size()]);
 	}
 	
 	public String getKey() {
