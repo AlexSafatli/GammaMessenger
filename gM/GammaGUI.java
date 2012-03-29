@@ -1,9 +1,8 @@
 package gM;
 
-import java.awt.Color;
+import net.*;
 
 import java.awt.EventQueue;
-import java.awt.Font;
 
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
@@ -14,12 +13,8 @@ import javax.swing.JTextArea;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
@@ -29,12 +24,18 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.UnknownHostException;
 
 public class GammaGUI implements ActionListener {
   
-	final JFileChooser fc = new JFileChooser();
-	final int RANDOMKEYFILELENGTH = 50;//Number of 1-24char(1message) keys to generate in one keyfile
+	// File choosing prompt.
+	private final JFileChooser fc = new JFileChooser();
 	
+	// Number of 1-24 char (1 message) keys to generate in one keyfile.
+	private final int RANDOMKEYFILELENGTH = 50; 
+	
+	// GUI Elements.
 	private JFrame frmGamm;
 	private JTextField textField;
 	private GammaToolBar toolBar;
@@ -42,20 +43,22 @@ public class GammaGUI implements ActionListener {
 	private JTextArea textArea;
 	private JTextArea eTextArea;
 	
+	// Encryption Options, Cipher Elements.
 	private boolean encrypt = false;
 	private String encryptionType = "None";
 	private static Caesar caesar;
 	private static Vigenere vigenere;
-	
 	private static Key key;
 	private Message yourMessage;
-	private String userName = "You";
 	
-	private String yourIP;
-	private int yourPort;
+	// Networking Elements.
+	private String userName = "User";
+	private int yourPort = 1199; // Default: 1199
 	private String theirIP;
 	private int theirPort;
-	
+	private Server server;
+	private Client client;
+	private Thread listener;
 
 	/**
 	 * Launch the application.
@@ -79,14 +82,14 @@ public class GammaGUI implements ActionListener {
 	/**
 	 * Create the application.
 	 */
-	public GammaGUI() {
+	public GammaGUI() throws IOException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		frmGamm = new JFrame();
 		frmGamm.setTitle("\u03B3Messenger 2012");
 		frmGamm.setResizable(false);
@@ -97,21 +100,23 @@ public class GammaGUI implements ActionListener {
 		toolBar = new GammaToolBar(this);
 		toolBar.setFloatable(false);
 		frmGamm.getContentPane().add(toolBar, "cell 0 0 2 1,growx,aligny top");
+		
 		//Initialize your Message/Key objects.
 		yourMessage = new Message();
+		
 		//Checks for typed messages, sends to text area on receiving enter.
 		textField = new JTextField();
 		textField.addKeyListener(new KeyAdapter() {
 			
 			public void keyTyped(KeyEvent e) {
 				if(e.getKeyChar()==KeyEvent.VK_ENTER){
-					//display message
+					// Display and send message.
 					yourMessage.setMessage(textField.getText());
-					display(userName + ": ");
-					display(yourMessage);
+					yourMessage.setSender(userName);
 					textField.setText("");
-					
-					//TODO send message function here
+					CodedMessage outMessage = sendMessage(yourMessage);
+					if (outMessage != null) display(yourMessage, outMessage);
+					else display(yourMessage.toLabeledMessage() + "\n");
 				}	
 			}
 
@@ -145,8 +150,12 @@ public class GammaGUI implements ActionListener {
 	    String cmd = e.getActionCommand();
 	    if("Open Keyfile".equals(cmd)) { //first button clicked
 	    	key = new Key();
-	        openKeyFile(e);
-	        display("\nKeyfile Loaded.\n");
+	        try {
+				openKeyFile(e);
+			} catch (IOException e1) {
+				System.out.println("I/O File error.");
+			}
+	        display("Keyfile Loaded.\n");
 	    }
 	    
 	    else if("Generate Keyfile".equals(cmd)) { //second button clicked
@@ -157,22 +166,30 @@ public class GammaGUI implements ActionListener {
 	    
 	    else if("Save Conversation".equals(cmd)) { //third button clicked	    	
 	    	saveConvo(e);
-	    	display("\nConversation Saved\n");
+	    	display("Conversation Saved\n");
 	    }
 	    
 	    else if("Connect".equals(cmd)) { //fourth button clicked
-	    	connectMenu();
+	    	try {
+				connectMenu();
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	    	System.out.println("Connection Establised");
 	    }
 	    
 	    else if("Encryption Options".equals(cmd)) { //fifth button clicked
 		    encryptionMenu();
-		    display("\nEncryption Type is Now: " + encryptionType + "\n");
+		    display("Encryption Type is Now: " + encryptionType + "\n");
 		}
 	    
 	    else if("General Options".equals(cmd)) { //sixth button clicked
 	    	optionsMenu();
-		    display("\n Username is: " + userName + " port: " + yourPort);
+		    display("Username is: " + userName + " port: " + yourPort + "\n");
 		}
 	    
 	    else if("Un-Encrypted view".equals(cmd)||"Encrypted view".equals(cmd)) { //seventh button clicked
@@ -208,22 +225,29 @@ public class GammaGUI implements ActionListener {
 		}
 	}
 
-	private void connectMenu() {
-		// TODO Auto-generated method stub
+	private void connectMenu() throws UnknownHostException, IOException {
+	
 		String[] options = { "Establish New Conversation", "Connect to Existing Conversation" };
 		int connectType = JOptionPane.showOptionDialog(null, "Do you want to start a new conversation (server)" +
 				" or join an existing conversation (client)?", "Connection Options",
 		JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
 		null, options, options[0]);
 		
-		//Server
-		if(connectType == 0)
-			display("Server created: IP XXX Port: " + yourPort);//TODO NETWORK CLASS API HERE
-		//Port
+		// Server
+		if(connectType == 0) {
+			display("Conversation started: Port = " + yourPort + "\n");
+			server = new Server(yourPort, this);
+			listener = new Thread(server);
+			listener.start();
+		}
+		// Client
 		else {
 			theirIP = JOptionPane.showInputDialog("Enter the IP address you wish to connect to.");
 			theirPort = Integer.valueOf(JOptionPane.showInputDialog("Enter the Port Number to connect to."));
-			display("Connecting to " + theirIP + ":" + theirPort);
+			display("Connected to " + theirIP + ":" + theirPort + "\n");
+			client = new Client(theirIP, yourPort, this);
+			listener = new Thread(client);
+			listener.start();
 		}
 			
 	}
@@ -235,6 +259,7 @@ public class GammaGUI implements ActionListener {
 	}
 
 	private void encryptionMenu() {
+		
 		String[] possibleValues = { "None", "One Time Pad", "Classic Vigenere", "Caesar"};
 		encryptionType = (String)JOptionPane.showInputDialog(null,"Choose Encryption Type:", "Input",
 				JOptionPane.INFORMATION_MESSAGE, null,possibleValues, possibleValues[0]);
@@ -246,19 +271,22 @@ public class GammaGUI implements ActionListener {
 			caesar.setShift(Integer.parseInt(JOptionPane.showInputDialog(null, "Enter Caesar shift (Number <= 25)")));
 		}
 		else if(encryptionType.equals("Classic Vigenere"))
-			vigenere = new Vigenere();
-		
-		else if(encryptionType.equals("One Time Pad")) {
-			if(key.equals(null)) {
-				display("You need to open or generate a key to select this encyption type.");
+			if(key == null) {
+				display("You need to open or generate a key to select this encyption type.\n");
 				encryptionType = "None";
 			}
-			else	
-			vigenere = new Vigenere(key);
+			else vigenere = new Vigenere(key);
+		
+		else if(encryptionType.equals("One Time Pad")) {
+			if(key == null) {
+				display("You need to open or generate a key to select this encyption type.\n");
+				encryptionType = "None";
+			}	
+			else vigenere = new Vigenere(key);
 		}
 	}
 
-	private void openKeyFile(ActionEvent e) {
+	private void openKeyFile(ActionEvent e) throws IOException {
 		// TODO Auto-generated method stub
 		int rValue = fc.showOpenDialog(toolBar.getComponent(1));
 		if (rValue == JFileChooser.APPROVE_OPTION) {
@@ -275,16 +303,15 @@ public class GammaGUI implements ActionListener {
 		if (rValue == JFileChooser.APPROVE_OPTION) {
 			
 			File file = fc.getSelectedFile();
+			
 			try {
-				BufferedWriter out = new BufferedWriter(new FileWriter(file));
-				out.write(textArea.getText());
-				out.close();
-				} 
-				catch (IOException err) 
-				{ 
-				System.out.println("Exception ");
-
-				}
+				PrintWriter output = new PrintWriter(file);
+				output.println(textArea.getText());
+				output.close();
+			} 
+			catch (IOException err) { 
+				System.out.println("Exception.");
+			}
 			
 		}
 	}
@@ -300,31 +327,77 @@ public class GammaGUI implements ActionListener {
 				BufferedWriter out = new BufferedWriter(new FileWriter(file));
 				out.write(key.toString());
 				out.close();
-				display("\nKeyfile Generated.\n");
+				display("Keyfile Generated.\n");
 				} 
 				catch (IOException err) 
 				{ 
-				System.out.println("Exception ");
+				System.out.println("Exception.");
 
 				}
 			
 		}
 	}
 
-	public void display(Message s) {
-		textArea.append(s.getMessage()+"\n");//Always append text to unecrypted window
-		//"None", "One Time Pad", "Classic Vigenere", "Caesar"
+	public void display(CodedMessage s) {
+		eTextArea.append(s.toLabeledMessage()+"\n");//Always append text to encrypted window
+		
+		// "None", "One Time Pad", "Classic Vigenere", "Caesar"
 		if(encryptionType.equals("None")){
-		eTextArea.append(s.getMessage());//TODO NETWORK SEND HERE
+			textArea.append(s.toLabeledMessage());
 		}
-		else if(encryptionType.equals("One Time Pad")||encryptionType.equals("Classic Vigenere")){
-			eTextArea.append(vigenere.encode(s).toString());//TODO NETWORK SEND HERE
+		else if(encryptionType.equals("One Time Pad")) {
+			key.setIndex(s.getKey());
+			textArea.append(vigenere.decode(s).toLabeledMessage());
+		}
+		else if(encryptionType.equals("Classic Vigenere")){
+			key.setIndex(s.getKey());
+			textArea.append(vigenere.decodeAlpha(s).toLabeledMessage());
 		}
 		else if(encryptionType.equals("Caesar")) {
-			eTextArea.append(caesar.encode(s).getMessage());
+			textArea.append(caesar.decode(s).toLabeledMessage());
 		}
 		
-		eTextArea.append("\n");
+		textArea.append("\n");
+	}
+	
+	public void display(Message m, CodedMessage c) {
+		// If both already present (i.e. on message
+		// sending) and decoding not necessary.
+		
+		eTextArea.append(c.toLabeledMessage() + "\n");
+		textArea.append(m.toLabeledMessage() + "\n");
+		
+	}
+	
+	public CodedMessage sendMessage(Message s) {
+		
+		if (server == null && client == null) return null;
+		
+		CodedMessage encrypted = new CodedMessage();
+		
+		// "None", "One Time Pad", "Classic Vigenere", "Caesar"
+		if(encryptionType.equals("None")){
+			encrypted = new CodedMessage(s.getMessage(), s.getSender());
+		}
+		else if(encryptionType.equals("One Time Pad")) {
+			encrypted = vigenere.encode(s);
+			key.incrementIndex();
+		}		
+		else if(encryptionType.equals("Classic Vigenere")){
+			key.setIndex(0); // by default, sets key to first in keyset.
+			encrypted = vigenere.encodeAlpha(s);
+		}
+		else if(encryptionType.equals("Caesar")) {
+			encrypted = caesar.encode(s);
+		}
+		
+		try {
+			if (server != null) server.sendMessage(encrypted.toTransmitString());
+			else if (client != null) client.sendMessage(encrypted.toTransmitString());
+		} catch (IOException err) { System.out.println("Exception with Message Sending"); }
+		
+		return encrypted;
+		
 	}
 	
 	//Used for Error/Info text to screen.

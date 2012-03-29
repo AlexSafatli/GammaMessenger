@@ -40,7 +40,8 @@ public class Caesar implements Cipher {
 	}
 	
 	public CodedMessage encode(Message plaintext) {
-		return new CodedMessage(cipher(plaintext.getCharArray()));
+		return new CodedMessage(cipher(plaintext.getCharArray()), 
+				plaintext.getSender(), plaintext.getTime());
 	}
 	
 	public CodedMessage encodeAlpha(String plaintext) {
@@ -48,7 +49,8 @@ public class Caesar implements Cipher {
 	}
 	
 	public CodedMessage encodeAlpha(Message plaintext) {
-		return new CodedMessage(cipherAlpha(plaintext.getCharArray()));
+		return new CodedMessage(cipherAlpha(plaintext.getCharArray()),
+				plaintext.getSender(), plaintext.getTime());
 	}
 	
 	private char[] cipher(char[] plaintext) {
@@ -97,7 +99,8 @@ public class Caesar implements Cipher {
 	}
 	
 	public Message decode(CodedMessage plaintext) {
-		return new Message(decipher(plaintext.getMessage().toCharArray()));
+		return new Message(decipher(plaintext.getMessage().toCharArray()),
+				plaintext.getSender(), plaintext.getTime());
 	}
 	
 	public Message decodeAlpha(String plaintext) {
@@ -105,7 +108,8 @@ public class Caesar implements Cipher {
 	}
 	
 	public Message decodeAlpha(CodedMessage plaintext) {
-		return new Message(decipherAlpha(plaintext.getMessage().toCharArray()));
+		return new Message(decipherAlpha(plaintext.getMessage().toCharArray()),
+				plaintext.getSender(), plaintext.getTime());
 	}
 	
 	private char[] decipher(char[] ciphertext) {

@@ -1,35 +1,86 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net;
+import gM.GammaGUI;
 
-/**
- *
- * @author User
- */
 import java.io.*;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-public class Server {
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
-        Server myServ = new Server();
-        myServ.run();
-        // TODO code application logic here
-    }
-    public ServerSocket mySS;
-    public void run() throws Exception{
-         mySS = new ServerSocket(1999); // port address
-        Socket SS_accept = mySS.accept();
-        BufferedReader SS_BF = new BufferedReader(new InputStreamReader(SS_accept.getInputStream()));
-        String temp = SS_BF.readLine();
-        System.out.println(temp);
-        PrintStream SSPS = new PrintStream (SS_accept.getOutputStream());
-        SSPS.println("Server : Message to Client");
-        
-        
-    }
+import cipher.CodedMessage;
+
+public class Server implements Runnable {
+	
+	private DataInputStream streamIn;
+	private DataOutputStream streamOut;
+	private ServerSocket server;
+	private Socket socket;
+	private int port;
+	private GammaGUI gui;
+	
+	// Constructors
+
+	public Server(int port, GammaGUI gui) throws UnknownHostException, IOException {
+
+		this.port = port;
+		this.gui = gui;
+		server = new ServerSocket(port);
+
+	}
+	
+	// Get methods.
+	
+	public int getPort() {
+		return port;
+	}
+	
+	// Network methods.
+	
+	public void run() {
+		
+		try {
+			socket = server.accept(); 
+			System.out.println("Connection Made:\n" + socket);
+			open();
+			while (true) {
+				String line = "";
+				try {
+					line = receiveMessage();
+					if (!line.equals("")) {
+						CodedMessage out = new CodedMessage();
+						out.fromTransmitString(line);
+						gui.display(out);
+					}
+	            }
+	            catch(IOException ioe) {  break; }
+			}
+			close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void open() throws IOException {
+		// Open input stream.
+		streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+		// Open output stream.
+		streamOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+	}
+	
+	public void close() throws IOException {
+		// Close server, connection, etc.
+		if (socket != null) socket.close();
+		if (streamIn != null) streamIn.close();
+		if (streamOut != null) streamOut.close();
+	}
+	
+	public void sendMessage(String msg) throws IOException {
+		streamOut.writeUTF(msg);
+		streamOut.flush();
+	}
+	
+	public String receiveMessage() throws IOException {
+		return streamIn.readUTF();
+	}
+	
 }

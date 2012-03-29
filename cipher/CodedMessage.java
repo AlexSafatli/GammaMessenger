@@ -33,6 +33,22 @@ public class CodedMessage extends Message {
 		super(c);
 	}
 	
+	public CodedMessage(String c, String n) {
+		super(c, n);
+	}
+	
+	public CodedMessage(char[] c, String n) {
+		super(c,n);
+	}
+	
+	public CodedMessage(String c, String n, Timestamp t) {
+		super(c,n,t);
+	}
+	
+	public CodedMessage(char[] c, String n, Timestamp t) {
+		super(c,n,t);
+	}
+	
 	public CodedMessage(String c, int k) {
 		super(c);
 		keyId = k;
@@ -40,6 +56,26 @@ public class CodedMessage extends Message {
 	
 	public CodedMessage(char[] c, int k) {
 		super(c);
+		keyId = k;
+	}
+	
+	public CodedMessage(String c, String name, int k) {
+		super(c, name);
+		keyId = k;
+	}
+	
+	public CodedMessage(char[] c, String name, int k) {
+		super(c, name);
+		keyId = k;
+	}
+	
+	public CodedMessage(String c, String name, Timestamp t, int k) {
+		super(c, name, t);
+		keyId = k;
+	}
+	
+	public CodedMessage(char[] c, String name, Timestamp t, int k) {
+		super(c, name, t);
 		keyId = k;
 	}
 	
@@ -59,13 +95,14 @@ public class CodedMessage extends Message {
 	
 	public String toTransmitString() {
 		return "[" + keyId + "]" + 
-				getTime().toUnformatted() + getMessage();
+				getTime().toUnformatted() + "<" + getSender() + ">" + getMessage();
 	}
 	
 	public void fromTransmitString(String t) {
 		keyId = Integer.parseInt(t.substring(t.indexOf("[")+1,t.indexOf("]")));
 		setTime(new Timestamp(t.substring(t.indexOf("]")+1,t.indexOf("]")+15)));
-		setMessage(t.substring(t.indexOf("]")+15,t.length()).toCharArray());
+		setSender(t.substring(t.indexOf("<")+1,t.indexOf(">")));
+		setMessage(t.substring(t.indexOf(">")+1,t.length()).toCharArray());
 	}
 	
 }

@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Key {
 	
@@ -223,85 +224,49 @@ public class Key {
 		splitString(new String(rns));
 	}
 	
-	public void openFile(File file) {
+	public void openFile(File file) throws IOException {
 		// Opens a file passed directly and reads it in as
 		// a string array to be used as the key.
 				
 		String read = "";
 		
-		try {	
-			// Open file.
-			FileInputStream fstream = new FileInputStream(file);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			
-			// Read line-by-line.
-			String r;
-			while ((r = br.readLine()) != null) read += r;
-			// Close stream.
-			in.close();	
-		}
-		catch (Exception err) {
-			System.err.println("Error: " + err.getMessage());
+		if (!file.exists()) {
+			System.out.println("File not found.");
+			return;
 		}
 		
+		Scanner input = new Scanner(file);
+		while (input.hasNext()) read += input.nextLine();
 		splitString(read); // Pass the file to be split into a String array.
 		
 	}
 	
-	public void openFile(String path) {
+	public void openFile(String path) throws IOException {
 		// Opens a file and reads it in as
 		// a string array to be used as the key.
 		
 		String read = "";
+		File file = new File(path);
 		
-		try {
-			
-			// Open file.
-			FileInputStream fstream = new FileInputStream(path);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			
-			// Read line-by-line.
-			String r;
-			while ((r = br.readLine()) != null) read += r;
-			
-			// Close stream.
-			in.close();	
-			
+		if (!file.exists()) {
+			System.out.println("File not found.");
+			return;
 		}
 		
-		catch (Exception err) {
-			System.err.println("Error: " + err.getMessage());
-		}
-		
+		Scanner input = new Scanner(file);
+		while (input.hasNext()) read += input.nextLine();
 		splitString(read); // Pass the file to be split into a String array.
 		
 	}
 	
-	public void saveFile(String path) {
+	public void saveFile(String path) throws FileNotFoundException {
 		// Saves the current keyset to a file.
 		
-		Writer output = null;
 		File file = new File(path);
-		
-		try {
-			
-			// Will overwrite the file if already present.
-			
-			file.createNewFile();
-			output = new BufferedWriter(new FileWriter(file));
-		
-			for (int i = 0; i < getLength(); i++) output.write(keyset.get(i) + "\n");
-			
-			output.close();
-			
-		}
-		
-		catch (Exception err) {
-			System.err.println("Error: " + err.getMessage());
-		}
-		
+		PrintWriter output = new PrintWriter(file);
+		for (int i = 0; i < getLength(); i++) output.print(keyset.get(i));
+		output.close();
+
 	}
 	
 	// toString

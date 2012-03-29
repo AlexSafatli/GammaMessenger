@@ -72,7 +72,8 @@ public class Vigenere implements Cipher {
 	}
 	
 	public CodedMessage encode(Message plaintext) {
-		return new CodedMessage(cipher(plaintext.getCharArray()),key.getIndex());
+		return new CodedMessage(cipher(plaintext.getCharArray()),plaintext.getSender(),
+				plaintext.getTime(),key.getIndex());
 	}
 	
 	public CodedMessage encodeAlpha(String plaintext) {
@@ -80,7 +81,8 @@ public class Vigenere implements Cipher {
 	}
 	
 	public CodedMessage encodeAlpha(Message plaintext) {
-		return new CodedMessage(cipherAlpha(plaintext.getCharArray()),key.getIndex());
+		return new CodedMessage(cipherAlpha(plaintext.getCharArray()),plaintext.getSender(),
+				plaintext.getTime(),key.getIndex());
 	}
 	
 	private char[] cipher(char[] plaintext) {
@@ -131,7 +133,8 @@ public class Vigenere implements Cipher {
 	}
 	
 	public Message decode(CodedMessage ciphertext) {
-		return new Message(decipher(ciphertext.getMessage().toCharArray()));
+		return new Message(decipher(ciphertext.getMessage().toCharArray()), 
+				ciphertext.getSender(), ciphertext.getTime());
 	}
 	
 	public Message decodeAlpha(String ciphertext) {
@@ -139,7 +142,8 @@ public class Vigenere implements Cipher {
 	}
 	
 	public Message decodeAlpha(CodedMessage ciphertext) {
-		return new Message(decipherAlpha(ciphertext.getMessage().toCharArray()));
+		return new Message(decipherAlpha(ciphertext.getMessage().toCharArray()),
+				ciphertext.getSender(), ciphertext.getTime());
 	}
 	
 	private char[] decipher(char[] ciphertext) {

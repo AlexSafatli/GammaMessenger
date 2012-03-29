@@ -84,6 +84,14 @@ public class Timestamp {
 	
 	// Returns the string.
 
+	public String toOnlyHour() {
+		// Returns only the hour, minute, and second.
+		// Used when the other parameters are not
+		// necessary.
+		SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
+		return date.format(CALENDAR.getTime());
+	}
+	
 	public String toUnformatted() {
 		// No spaces, very unformatted String.
 		// Used in the creation of a raw transmission String
