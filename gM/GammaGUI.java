@@ -237,6 +237,8 @@ public class GammaGUI implements ActionListener {
 			if (server != null) server.close();
 			else if (client != null) client.close();
 			display("Current connection closed.\n");
+			server = null;
+			client = null;
 		}
 		
 		// Server
