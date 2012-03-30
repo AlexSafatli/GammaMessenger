@@ -153,7 +153,7 @@ public class GammaGUI implements ActionListener {
 	        try {
 				openKeyFile(e);
 			} catch (IOException e1) {
-				System.out.println("I/O File error.");
+				display("I/O File error. Try again.\n");
 			}
 	        display("Keyfile Loaded.\n");
 	    }
@@ -173,11 +173,9 @@ public class GammaGUI implements ActionListener {
 	    	try {
 				connectMenu();
 			} catch (UnknownHostException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				display("Unknown host. Cannot connect.\n");
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				display("A problem occurred trying to connect. Try again.\n");
 			}
 	    	System.out.println("Connection Establised");
 	    }
@@ -233,8 +231,17 @@ public class GammaGUI implements ActionListener {
 		JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
 		null, options, options[0]);
 		
+		// Close current connections.
+		
+		if (server != null || client != null) {
+			if (server != null) server.close();
+			else if (client != null) client.close();
+			display("Current connection closed.\n");
+		}
+		
 		// Server
 		if(connectType == 0) {
+			
 			display("Conversation started: Port = " + yourPort + "\n");
 			server = new Server(yourPort, this);
 			listener = new Thread(server);
@@ -270,20 +277,12 @@ public class GammaGUI implements ActionListener {
 			caesar = new Caesar();
 			caesar.setShift(Integer.parseInt(JOptionPane.showInputDialog(null, "Enter Caesar shift (Number <= 25)")));
 		}
-		else if(encryptionType.equals("Classic Vigenere"))
+		else if(encryptionType.equals("Classic Vigenere") || encryptionType.equals("One Time Pad"))
 			if(key == null) {
 				display("You need to open or generate a key to select this encyption type.\n");
 				encryptionType = "None";
 			}
 			else vigenere = new Vigenere(key);
-		
-		else if(encryptionType.equals("One Time Pad")) {
-			if(key == null) {
-				display("You need to open or generate a key to select this encyption type.\n");
-				encryptionType = "None";
-			}	
-			else vigenere = new Vigenere(key);
-		}
 	}
 
 	private void openKeyFile(ActionEvent e) throws IOException {
@@ -310,7 +309,7 @@ public class GammaGUI implements ActionListener {
 				output.close();
 			} 
 			catch (IOException err) { 
-				System.out.println("Exception.");
+				display("Could not save to file.\n");
 			}
 			
 		}
@@ -328,12 +327,10 @@ public class GammaGUI implements ActionListener {
 				out.write(key.toString());
 				out.close();
 				display("Keyfile Generated.\n");
-				} 
-				catch (IOException err) 
-				{ 
-				System.out.println("Exception.");
-
-				}
+			} 
+			catch (IOException err) { 
+				display("Could not save to file.\n");
+			}
 			
 		}
 	}
@@ -394,7 +391,7 @@ public class GammaGUI implements ActionListener {
 		try {
 			if (server != null) server.sendMessage(encrypted.toTransmitString());
 			else if (client != null) client.sendMessage(encrypted.toTransmitString());
-		} catch (IOException err) { System.out.println("Exception with Message Sending"); }
+		} catch (IOException err) { display("Could not send message.\n"); }
 		
 		return encrypted;
 		
