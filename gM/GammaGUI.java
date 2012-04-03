@@ -61,7 +61,7 @@ public class GammaGUI implements ActionListener {
 	private Thread listener;
 
 	/**
-	 * Launch the application.
+	 * Main method. Launch the application. Calls the GUI constuctor.
 	 */
 	public static void main(String[] args) {
 		
@@ -80,7 +80,7 @@ public class GammaGUI implements ActionListener {
 	}
 
 	/**
-	 * Create the application.
+	 * GammaGui Constructor calls initialize method to fill contents of frame
 	 */
 	public GammaGUI() throws IOException {
 		initialize();
@@ -90,6 +90,8 @@ public class GammaGUI implements ActionListener {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() throws IOException {
+		//Frame initialization
+		
 		frmGamm = new JFrame();
 		frmGamm.setTitle("\u03B3Messenger 2012");
 		frmGamm.setResizable(false);
@@ -97,6 +99,7 @@ public class GammaGUI implements ActionListener {
 		frmGamm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGamm.getContentPane().setLayout(new MigLayout("", "[442px,grow][]", "[16px][grow][20px,grow][][][][][][][][]"));
 		
+		//Toolbar initialization
 		toolBar = new GammaToolBar(this);
 		toolBar.setFloatable(false);
 		frmGamm.getContentPane().add(toolBar, "cell 0 0 2 1,growx,aligny top");
@@ -121,7 +124,7 @@ public class GammaGUI implements ActionListener {
 			}
 
 		});
-		
+		//Scrollpane Initiliazation
 		scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -222,7 +225,10 @@ public class GammaGUI implements ActionListener {
 		    System.exit(0);
 		}
 	}
-
+	/*
+	 *Connect menu establishes a connection by calling on net library finctions and using JOptionPanes for
+	 *user input. 
+	 */
 	private void connectMenu() throws UnknownHostException, IOException {
 	
 		String[] options = { "Establish New Conversation", "Connect to Existing Conversation" };
@@ -260,13 +266,13 @@ public class GammaGUI implements ActionListener {
 		}
 			
 	}
-
+	//Basic Options Menu. Set username/Port number.
 	private void optionsMenu() {
 		// TODO Auto-generated method stub
 		 userName = JOptionPane.showInputDialog(null, "What is your user name?");
 		 yourPort = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter Port Number (E.g. 32450"));
 	}
-
+	//Menu to select encryption type.
 	private void encryptionMenu() {
 		
 		String[] possibleValues = { "None", "One Time Pad", "Classic Vigenere", "Caesar"};
@@ -288,7 +294,7 @@ public class GammaGUI implements ActionListener {
 	}
 
 	private void openKeyFile(ActionEvent e) throws IOException {
-		// TODO Auto-generated method stub
+		// Opens a keyfile using JFileChooser. Calls Key openFile(File) method
 		int rValue = fc.showOpenDialog(toolBar.getComponent(1));
 		if (rValue == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
@@ -297,6 +303,7 @@ public class GammaGUI implements ActionListener {
 		
 	}
 	
+	//Saves the text of the conversation up to this point.
 	private void saveConvo(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
@@ -318,7 +325,7 @@ public class GammaGUI implements ActionListener {
 	}
 	
 	private void saveKeyFile(ActionEvent e) {
-		// TODO Auto-generated method stub
+		// Saves a keyfile, generated or otherwise.
 		
 		int rValue = fc.showSaveDialog(toolBar.getComponent(3));
 		if (rValue == JFileChooser.APPROVE_OPTION) {
@@ -337,6 +344,7 @@ public class GammaGUI implements ActionListener {
 		}
 	}
 
+	//This method displays a message to both textareas, decoding where necessary (Encrypted/unecrypted.)
 	public void display(CodedMessage s) {
 		eTextArea.append(s.toLabeledMessage()+"\n");//Always append text to encrypted window
 		

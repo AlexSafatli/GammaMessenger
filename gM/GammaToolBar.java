@@ -10,9 +10,9 @@ public class GammaToolBar extends JToolBar{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String[] imageFiles;
-	private String[] toolbarLabels;
-	private final int VIEWBUTTONNUM = 6;
+	private String[] imageFiles;//Image icon name
+	private String[] toolbarLabels;//Label tooltip name
+	private final int VIEWBUTTONNUM = 6;// final reference to which component is the switch view button
 	
 	public GammaToolBar(GammaGUI gammaGUI) {
 		
@@ -28,18 +28,7 @@ public class GammaToolBar extends JToolBar{
 			this.toolbarLabels = toolbarLabels;
 			
 		
-		/*
-		Insets margins = new Insets (0,0,0,0);
-		//Creates all the buttons on toolbars. adds actionlisteners.
-		for(int i = 0; i < toolbarLabels.length; i++) {
-			ToolBarButton button = 
-					new ToolBarButton("images/" + imageFiles[i]);
-			button.setToolTipText(toolbarLabels[i]);
-		    button.setMargin(margins);
-		    button.setActionCommand(toolbarLabels[i]);
-		    button.addActionListener(gammaGUI);
-		    add(button);
-		    */
+			//Create a series of Jbuttons with the image names, tooltips specified. Add actionlisteners. JButtons
 			Insets margins = new Insets (0,0,0,0);
 			for(int i = 0; i < toolbarLabels.length; i++) {
 				Icon icon = new ImageIcon(ClassLoader.getSystemResource("images/"+imageFiles[i]));
@@ -57,19 +46,7 @@ public class GammaToolBar extends JToolBar{
 			}
 		
 	}
-
-	public void setTextLabels(boolean labelsAreEnabled) {
-	    Component c;
-	    int i = 0;
-	    while((c = getComponentAtIndex(i++)) != null) {
-	      ToolBarButton button = (ToolBarButton)c;
-	      if (labelsAreEnabled)
-	        button.setText(button.getToolTipText());
-	      else
-	        button.setText(null);
-	   }
-	}
-	
+	//Method changes the icon of the encrypted/un-encrypted view button. Redraws the toolbar.
 	public void changeView(boolean encrypt){
 		JButton newView = (JButton)this.getComponentAtIndex(VIEWBUTTONNUM);
 		if(encrypt){
